@@ -16,3 +16,5 @@ build/darwin/c4che/build.config.py
 build/darwin/config.log
 
 build/darwin/.lock-waf_darwin_build
+
+.DS_Store
