@@ -6,8 +6,8 @@ int main(){
     
     std::cout << "SERVER WITH RLNC\n\n" << std::endl;
     
-    uint32_t symbols = 42; //Generation size
-    uint32_t symbol_size = 100; //Size of every symbol (bytes)
+    uint32_t symbols = 11; //Generation size
+    uint32_t symbol_size = 1; //Size of every symbol (bytes)
     
     // Typdefs for the encoder/decoder type we wish to use
     typedef kodo::full_rlnc_encoder<fifi::binary8> rlnc_encoder;//Passing af binary finite field obj to the encoder obj
@@ -23,7 +23,7 @@ int main(){
     //Allocate storage for the payload
     std::vector<uint8_t> payload(encoder->payload_size());
 
-    std::cout << encoder->block_size();
+    //std::cout << "\nPayload Size: " << payload.size <<"\n"<<std::endl;
     
     //Allocate storage for the ingoing data
     std::vector<uint8_t> data_in(encoder->block_size());
@@ -31,13 +31,22 @@ int main(){
     
     // Just for fun - fill the data with random data
     kodo::random_uniform<uint8_t> fill_data;
-    fill_data.generate(&data_in[0], data_in.size());
+    //fill_data.generate(&data_in[0], data_in.size());
     
     //Set the first three characters (test)
     
-    data_in[0] = 'd';
-    data_in[1] = 'a';
-    data_in[2] = 'w';
+    data_in[0] = 'H';
+    data_in[1] = 'e';
+    data_in[2] = 'l';
+    data_in[3] = 'l';
+    data_in[4] = 'o';
+    data_in[5] = ' ';
+    data_in[6] = 'w';
+    data_in[7] = 'o';
+    data_in[8] = 'r';
+    data_in[9] = 'l';
+    data_in[10] = 'd';
+    data_in[11] = '!';
     
     // Assign the data buffer to the encoder so that we may start
     // to produce encoded symbols from it
@@ -50,7 +59,6 @@ int main(){
     bool yes = true;
     Postoffice::createTxSocket(yes, IP, PORT, encoder->block_size());
     
-    int i=0;
     
     std::cout << "Ready to send packets!\n\n" << std::endl;
     
@@ -68,26 +76,38 @@ int main(){
 //    }
     
     
+    int a=1;
     
     while( 1 )
     {
         // Encode a packet into the payload buffer
         encoder->encode( &payload[0] );
         
-        //Send the encoded packet
-        Postoffice::send(&payload[0], sizeof(encoder->payload_size()));
-        i++;
         
+        for (int i=0; i < encoder->payload_size(); i++) {
+            
+            //Send the encoded packet
+            Postoffice::send(&payload[i], 1);
+        }
         
-        std::cout << i << "packet sent: " << payload[0] << "\n" << std::endl;
-         
+        std::cout << "Packet: " << a << "\n" << std::endl;
+        
+        a++;
+        
+        //std::cout << i << "packet sent: " << payload[0] << "\n" << std::endl;
+        
         
         // Pass that packet to the decoder
         decoder->decode( &payload[0] );
         
-        if (decoder->is_complete()) {
+        
+        if (a==50) {
             break;
         }
+        
+//        if (decoder->is_complete()) {
+//            break;
+//        }
         
     }
     
@@ -101,7 +121,12 @@ int main(){
     std::vector<uint8_t> data_out(decoder->block_size());
     kodo::copy_symbols(kodo::storage(data_out), decoder); 
     
-    std::cout << "Recieved: " << data_out[0] << data_out[1] << data_out[2];
+    std::cout << "Recieved: ";
+    
+    for (int i=0; i<(symbols+1); i++) {
+        std::cout << data_in[i];
+    }
+    std::cout << "\n" << std::endl;
     
     // Check we properly decoded the data
     if (std::equal(data_out.begin(), data_out.end(), data_in.begin()))
