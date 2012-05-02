@@ -3,141 +3,98 @@
 #include "../postoffice/Postoffice.h"
 
 int main(){
+    // Set the number of symbols (i.e. the generation size in RLNC
+    // terminology) and the size of a symbol in bytes 
+    uint32_t symbols_max = 13;
+    uint32_t symbol_size = 1;
     
-    std::cout << "SERVER WITH RLNC\n\n" << std::endl;
     
-    uint32_t symbols = 11; //Generation size
-    uint32_t symbol_size = 1; //Size of every symbol (bytes)
+    uint32_t symbols_1 = 5; //The size of HELLO
+    uint32_t symbols_2 = 8; // The size of HELLO WO
+    uint32_t symbols_3 = symbols_max; //The size of HELLO WORLD!
+    
     
     // Typdefs for the encoder/decoder type we wish to use
-    typedef kodo::full_rlnc_encoder<fifi::binary8> rlnc_encoder;//Passing af binary finite field obj to the encoder obj
+    typedef kodo::full_rlnc_encoder<fifi::binary8> rlnc_encoder;
     typedef kodo::full_rlnc_decoder<fifi::binary8> rlnc_decoder;
     
-    //Make encoding factory with the symbols and their size
-    rlnc_encoder::factory encoder_factory(symbols, symbol_size);    
-    rlnc_encoder::pointer encoder = encoder_factory.build(symbols, symbol_size);
-
-    rlnc_decoder::factory decoder_factory(symbols, symbol_size);
-    rlnc_decoder::pointer decoder = decoder_factory.build(symbols, symbol_size);
+    //Making the factories
+    rlnc_encoder::factory encoder_factory(symbols_max, symbol_size);    
     
-    //Allocate storage for the payload
-    std::vector<uint8_t> payload(encoder->payload_size());
-
-    //std::cout << "\nPayload Size: " << payload.size <<"\n"<<std::endl;
+    //Making the encoders with different sizes
+    //encoders
+    rlnc_encoder::pointer encoder_1 = encoder_factory.build(symbols_1, symbol_size);
+    rlnc_encoder::pointer encoder_2 = encoder_factory.build(symbols_2, symbol_size);
+    rlnc_encoder::pointer encoder_3 = encoder_factory.build(symbols_3, symbol_size);
     
-    //Allocate storage for the ingoing data
-    std::vector<uint8_t> data_in(encoder->block_size());
-
+    // Allocate some data to encode. In this case we make a buffer with the
+    // same size as the encoder's block size (the max. amount a single encoder
+    // can encode)
+    std::vector<uint8_t> data_in_1(symbols_1);
+    std::vector<uint8_t> data_in_2(symbols_2);
+    std::vector<uint8_t> data_in_3(13);
     
-    // Just for fun - fill the data with random data
-    kodo::random_uniform<uint8_t> fill_data;
-    //fill_data.generate(&data_in[0], data_in.size());
+    const char* streng = "HELLO WORLD!";
     
-    //Set the first three characters (test)
+    copy(streng, streng+symbols_1, data_in_1.begin());
+    copy(streng, streng+symbols_2, data_in_2.begin());
+    copy(streng, streng+symbols_3, data_in_3.begin());
+      
     
-    data_in[0] = 'H';
-    data_in[1] = 'e';
-    data_in[2] = 'l';
-    data_in[3] = 'l';
-    data_in[4] = 'o';
-    data_in[5] = ' ';
-    data_in[6] = 'w';
-    data_in[7] = 'o';
-    data_in[8] = 'r';
-    data_in[9] = 'l';
-    data_in[10] = 'd';
-    data_in[11] = '!';
     
     // Assign the data buffer to the encoder so that we may start
     // to produce encoded symbols from it
-    kodo::set_symbols(kodo::storage(data_in), encoder);
+    kodo::set_symbols(kodo::storage(data_in_1), encoder_1);
+    kodo::set_symbols(kodo::storage(data_in_2), encoder_2);
+    kodo::set_symbols(kodo::storage(data_in_3), encoder_3);
     
     
-    const char* IP = "255.255.255.255";
-    const char* PORT = "4000";
     
-    bool yes = true;
-    Postoffice::createTxSocket(yes, IP, PORT, encoder->block_size());
-    
-    
-    std::cout << "Ready to send packets!\n\n" << std::endl;
-    
-//    while( i!=symbols )
-//    {
-//        std::cout << i;
-//        // Encode a packet into the payload buffer
-//        encoder->encode( &payload[0] );
-//        
-//        //Send the encoded packet
-//        Postoffice::send(&payload[0], sizeof(encoder->payload_size()));
-//        i++;
-//        
-//        std::cout << "packet sent\n";
-//    }
+    // Allocate some storage for a "payload" the payload is what we would
+    // eventually send over a network
+    std::vector<uint8_t> payload_1(encoder_3->payload_size());
+    std::vector<uint8_t> payload_2(encoder_3->payload_size());
+    std::vector<uint8_t> payload_3(encoder_3->payload_size());
     
     
-    int a=1;
     
-    while( 1 )
-    {
-        // Encode a packet into the payload buffer
-        encoder->encode( &payload[0] );
+    
+    
+    //Generate postoffice
+    postoffice po("4000", "255.255.255.255");
+    
+    for (int i = 0; i<symbols_max+3; i++){
+    	serial_data letter;
+    //int coder_choice = 1+rand()%3;
         
+        int coder_choice = 3;
         
-        for (int i=0; i < encoder->payload_size(); i++) {
+        if (coder_choice==1) {
+            encoder_1->encode( &payload_1[0] );
             
-            //Send the encoded packet
-            Postoffice::send(&payload[i], 1);
+            stamp p1_stamp = {1, 3, 1, 1, 1, symbols_max, symbols_1};
+        	serial_data p1_serial = {encoder_1->payload_size(), (void*)&payload_1[0]};
+        	letter = frank(&p1_stamp, p1_serial);
+            
         }
-        
-        std::cout << "Packet: " << a << "\n" << std::endl;
-        
-        a++;
-        
-        //std::cout << i << "packet sent: " << payload[0] << "\n" << std::endl;
-        
-        
-        // Pass that packet to the decoder
-        decoder->decode( &payload[0] );
-        
-        
-        if (a==50) {
-            break;
+        else if (coder_choice==2) {
+            encoder_2->encode( &payload_2[0] );
+            
+            stamp p2_stamp = {1, 3, 2, 1, 1, symbols_max, symbols_2};
+        	serial_data p2_serial = {encoder_2->payload_size(), (void*)&payload_2[0]};
+        	letter = frank(&p2_stamp, p2_serial);
+            
         }
-        
-//        if (decoder->is_complete()) {
-//            break;
-//        }
-        
+        else {
+            encoder_3->encode( &payload_3[0] );
+            
+            stamp p3_stamp = {1, 3, 3, 1, 1, symbols_max, symbols_3};
+        	serial_data p3_serial = {encoder_3->payload_size(), (void*)&payload_3[0]};
+        	letter = frank(&p3_stamp, p3_serial);
+            
+        }
+        po.send(letter.data, letter.size);
     }
     
-
-       
-    
-    Postoffice::closeConnection();
-    
-    
-    // The decoder is complete, now copy the symbols from the decoder
-    std::vector<uint8_t> data_out(decoder->block_size());
-    kodo::copy_symbols(kodo::storage(data_out), decoder); 
-    
-    std::cout << "Recieved: ";
-    
-    for (int i=0; i<(symbols+1); i++) {
-        std::cout << data_in[i];
-    }
-    std::cout << "\n" << std::endl;
-    
-    // Check we properly decoded the data
-    if (std::equal(data_out.begin(), data_out.end(), data_in.begin()))
-    {
-        std::cout << "Data decoded correctly" << std::endl;
-    }
-    else
-    {
-        std::cout << "Unexpected failure to decode "
-        << "please file a bug report :)" << std::endl;
-    }
-
-    
-    }
+    po.closeConnection();
+}
