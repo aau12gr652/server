@@ -63,37 +63,54 @@ int main(){
     //Generate postoffice
     postoffice po("4000", "255.255.255.255");
     
-    for (int i = 0; i<symbols_max+3; i++){
-    	serial_data letter;
-    //int coder_choice = 1+rand()%3;
+    stamp payload_stamp;
+    
+    payload_stamp.Generation_ID = 1;
+    payload_stamp.Number_Of_Layers = 3;
+    payload_stamp.Field_Size = 1;
+    payload_stamp.Generation_Size = 13;
+    payload_stamp.Symbol_Size = 1;
+    
+    serial_data message;
+    for (int i = 0; i<symbols_max+100; i++){
+    	int coder_choice = 1+*devRandom(1)%100;
         
-        int coder_choice = 3;
         
-        if (coder_choice==1) {
+        //int coder_choice = 3;
+        
+        if (coder_choice<50) {
             encoder_1->encode( &payload_1[0] );
             
-            stamp p1_stamp = {1, 3, 1, 1, 1, symbols_max, symbols_1};
-        	serial_data p1_serial = {encoder_1->payload_size(), (void*)&payload_1[0]};
-        	letter = frank(&p1_stamp, p1_serial);
+            payload_stamp.Layer_ID = 1;
+            payload_stamp.Layer_Size = symbols_1;
+            
+        	message.data = (void*)&payload_1[0];
+        	message.size = encoder_1->payload_size();
             
         }
-        else if (coder_choice==2) {
+        else if (coder_choice<75) {
             encoder_2->encode( &payload_2[0] );
             
-            stamp p2_stamp = {1, 3, 2, 1, 1, symbols_max, symbols_2};
-        	serial_data p2_serial = {encoder_2->payload_size(), (void*)&payload_2[0]};
-        	letter = frank(&p2_stamp, p2_serial);
+            payload_stamp.Layer_ID = 2;
+            payload_stamp.Layer_Size = symbols_2;
+            
+        	message.data = (void*)&payload_2[0];
+        	message.size = encoder_2->payload_size();
             
         }
         else {
             encoder_3->encode( &payload_3[0] );
             
-            stamp p3_stamp = {1, 3, 3, 1, 1, symbols_max, symbols_3};
-        	serial_data p3_serial = {encoder_3->payload_size(), (void*)&payload_3[0]};
-        	letter = frank(&p3_stamp, p3_serial);
+            payload_stamp.Layer_ID = 3;
+            payload_stamp.Layer_Size = symbols_3;
+            
+        	message.data = (void*)&payload_3[0];
+        	message.size = encoder_3->payload_size();
             
         }
-        po.send(letter.data, letter.size);
+        
+        std::cout << "packet sent from layer: " << message.size << std::endl;
+        po.send(message.data, message.size, payload_stamp);
     }
     
     po.closeConnection();
