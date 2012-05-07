@@ -2,7 +2,6 @@
 
 #include "../postoffice/Postoffice.h"
 #include "encoder.h"
-#include <vector>
 
 int main(){
     encoder foo=encoder();
@@ -19,21 +18,14 @@ int main(){
     foo.set_generation_size(14);
     foo.set_layer_size(0, 6);
     foo.set_layer_size(1, 14);
-    foo.set_layer_gamma(0, 75);
+    foo.set_layer_gamma(0, 50);
     foo.set_layer_gamma(1, 100);
     stamp* header = (stamp*)malloc(sizeof(stamp));
 
 	for (int u = 0; u < 3; u++)
 	{
 		foo.new_generation(msg[u]);
-
-		for (int layers = 0; layers < 2; layers++)
-		{
-			for (int it=0 ; it < foo.data_in_buffers[layers].size(); it++ )
-				std::cout << foo.data_in_buffers[layers][it];
-			std::cout << ":" << std::endl;
-		}
-
+		std::cout << u << std::endl;
 		for (int n = 0; n < 25; n++)
 		{
 			serial_data packet = foo.get_packet(header);

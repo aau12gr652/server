@@ -14,10 +14,11 @@ class encoder
     uint16_t Generation_Size;
     rlnc_encoder::pointer encoders[10];
     std::vector<uint8_t> payload_buffers[10];
+    std::vector<uint8_t> data_in_buffers[10];
     stamp payload_stamp;
+    rlnc_encoder::factory* encoder_factory;
 
 public:
-    std::vector<uint8_t> data_in_buffers[10];
     encoder(void);
     void new_generation(char*);
     void set_generation_size(uint32_t);
