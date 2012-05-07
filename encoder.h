@@ -13,8 +13,8 @@ class encoder
     uint32_t layer_gamma[10];
     uint16_t Generation_Size;
     rlnc_encoder::pointer encoders[10];
-    std::vector<uint8_t> payload_buffers[10];
     std::vector<uint8_t> data_in_buffers[10];
+    std::vector<uint8_t> payload_buffers[10];
     stamp payload_stamp;
     rlnc_encoder::factory* encoder_factory;
 
@@ -25,6 +25,7 @@ public:
     void set_layers(uint32_t);
     void set_layer_size(uint32_t layer, uint32_t size);
     void set_layer_gamma(uint32_t layer, uint32_t size);
+    void set_symbol_size(uint32_t S);
     serial_data get_packet(stamp*);
 };
 

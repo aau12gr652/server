@@ -37,6 +37,11 @@ void encoder::new_generation(char* data)
         copy(data, data+layer_size[n], data_in_buffers[n].begin());
 }
 
+void encoder::set_symbol_size(uint32_t S)
+{
+	symbol_size = S;
+}
+
 void encoder::set_generation_size(uint32_t G)
 {
     Generation_Size = G;
@@ -64,13 +69,13 @@ serial_data encoder::get_packet(stamp* header)
     int layer_choice = 1+*devRandom()%100;
     int n;
     for (n = 0; n < layers; n++)
-        if (layer_choice < layer_gamma[n])
+        if (layer_choice <= layer_gamma[n])
             break;
     encoders[n]->encode( &payload_buffers[n][0] );
-    payload_stamp.Layer_ID = n+1;
+    payload_stamp.Layer_ID = n+1; // +1 for at gøre Benjamin glad
     payload_stamp.Layer_Size = layer_size[n];
     memcpy(header, &payload_stamp, sizeof(stamp));
-    serial_data return_value = {layer_size[n], (void*)&payload_buffers[n][0]};
+    serial_data return_value = {encoders[n]->payload_size(), (void*)&payload_buffers[n][0]};
     return return_value;
 }
 
