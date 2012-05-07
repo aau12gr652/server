@@ -3,7 +3,7 @@
 
 import os
 
-# Necessary since we override different Contexts 
+# Necessary since we override different Contexts
 import waflib.extras.wurftools as wt
 
 APPNAME = 'kodo_encode_decode_simple'
@@ -46,8 +46,8 @@ def configure(conf):
     load_helper(conf, 'boost')
     load_helper(conf, 'kodo')
     load_helper(conf, 'gtest')
-   
- 
+
+
 def build(bld):
 
     load_helper(bld, 'sak')
@@ -66,10 +66,10 @@ def build(bld):
         cxxflags += ['/O2', '/Ob2', '/W3', '/EHsc']
 
     bld.program(features = 'cxx',
-                source   = ['server.cpp','../postoffice/Postoffice.cpp'],
+                source   = ['server.cpp','../postoffice/Postoffice.cpp', "encoder.cpp"],
                 target   = 'server',
-                include  = './postoffice/Postoffice.h',
+                include  = ['../postoffice/Postoffice.h',"encoder.h"],
                 cxxflags = cxxflags,
                 use      = ['kodo_includes', 'boost_includes',
-                            'fifi_includes', 'sak_includes']) 
+                            'fifi_includes', 'sak_includes'])
 
