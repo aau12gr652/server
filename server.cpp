@@ -17,7 +17,7 @@ int main(){
     msg[2] = msg3;
     foo.set_layers(2);
     foo.set_generation_size(14);
-    foo.set_layer_size(0, 5);
+    foo.set_layer_size(0, 6);
     foo.set_layer_size(1, 14);
     foo.set_layer_gamma(0, 75);
     foo.set_layer_gamma(1, 100);
@@ -27,9 +27,12 @@ int main(){
 	{
 		foo.new_generation(msg[u]);
 
-		for (int it=0 ; it < foo.data_in_buffers[1].size(); it++ )
-			std::cout << foo.data_in_buffers[1][it];
-			std::cout << std::endl;
+		for (int layers = 0; layers < 2; layers++)
+		{
+			for (int it=0 ; it < foo.data_in_buffers[layers].size(); it++ )
+				std::cout << foo.data_in_buffers[layers][it];
+			std::cout << ":" << std::endl;
+		}
 
 		for (int n = 0; n < 25; n++)
 		{
