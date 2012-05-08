@@ -7,13 +7,10 @@ int main(){
     encoder foo=encoder();
     postoffice po("4000", "255.255.255.255");
 
-    char* msg1="Hello, world!1";
-    char* msg2="Hello, world!2";
-    char* msg3="Hello, world!3";
     char* msg[3];
-    msg[0] = msg1;
-    msg[1] = msg2;
-    msg[2] = msg3;
+    msg[0] = "Hello, world!1";
+    msg[1] = "Hello, world!2";
+    msg[2] = "Hello, world!3";
     foo.set_layers(2);
     foo.set_generation_size(14);
     foo.set_layer_size(0, 5);
@@ -21,21 +18,22 @@ int main(){
     foo.set_layer_gamma(0, 50);
     foo.set_layer_gamma(1, 100);
     foo.set_symbol_size(1);
-    stamp* header = (stamp*)malloc(sizeof(stamp));
+    stamp* header = &foo.payload_stamp;
 
 	for (int u = 0; u < 3; u++)
 	{
 		foo.new_generation(msg[u]);
+		std::cout << "Send packet from GENENERATION: " << header->Generation_ID*1 << std::endl;
 		for (int n = 0; n < 25; n++)
 		{
-			serial_data packet = foo.get_packet(header);
+			serial_data packet = foo.get_packet();
 			po.send(packet, header);
+			std::cout << "Send packet from layer: " << header->Layer_ID*1 << std::endl;
 			//print_stamp(header);
-			usleep(1500);
+			usleep(500);
 		}
 	}
 
-	free(header);
     po.closeConnection();
     return 0;
 
