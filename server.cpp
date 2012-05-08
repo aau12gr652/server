@@ -18,18 +18,17 @@ int main(){
     foo.set_layer_gamma(0, 50);
     foo.set_layer_gamma(1, 100);
     foo.set_symbol_size(1);
-    stamp* header = &foo.payload_stamp;
 
 	for (int u = 0; u < 3; u++)
 	{
 		foo.new_generation(msg[u]);
-		std::cout << "Send packet from GENENERATION: " << header->Generation_ID*1 << std::endl;
-		for (int n = 0; n < 25; n++)
+		std::cout << "Done preparing GENENERATION: " << foo.payload_stamp.Generation_ID*1 << std::endl;
+		for (int n = 0; n < 16; n++)
 		{
 			serial_data packet = foo.get_packet();
-			po.send(packet, header);
-			std::cout << "Send packet from layer: " << header->Layer_ID*1 << std::endl;
-			//print_stamp(header);
+			po.send(packet, &foo.payload_stamp);
+			std::cout << "Send packet from layer: " << foo.payload_stamp.Layer_ID*1 << std::endl;
+			//print_stamp(&foo.payload_stamp);
 			usleep(500);
 		}
 	}
