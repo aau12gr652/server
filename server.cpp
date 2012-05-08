@@ -23,18 +23,18 @@ int main()
 	for (int u = 0; u < 3; u++)
 	{
 		foo.new_generation(msg[u]);
-		for (int n = 0; n < 14; n++)
+		for (int n = 0; n < 20; n++)
+			serial_data packet = foo.get_packet(1);
+		for (int n = 0; n < 13; n++)
 		{
 			serial_data packet = foo.get_packet(1);
-			std::cout << *(char*)packet.data << std::endl;
 			po.send(packet, &foo.payload_stamp);
 			std::cout << "Send packet: " << n  << " from layer: " << foo.payload_stamp.Layer_ID*1 << " Generation: " << foo.payload_stamp.Generation_ID*1 << std::endl;
 			usleep(500);
 		}
-		for (int n = 0; n < 6; n++)
+		for (int n = 0; n < 5; n++)
 		{
 			serial_data packet = foo.get_packet(0);
-			std::cout << *(char*)packet.data << std::endl;
 			po.send(packet, &foo.payload_stamp);
 			std::cout << "Send packet: " << n  << " from layer: " << foo.payload_stamp.Layer_ID*1 << " Generation: " << foo.payload_stamp.Generation_ID*1 << std::endl;
 			usleep(500);
