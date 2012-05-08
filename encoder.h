@@ -28,6 +28,8 @@ public:
     void set_symbol_size(uint32_t S);
     serial_data get_packet();
     serial_data get_packet(uint32_t);
+    int send_packet(postoffice);
+    int send_packet(postoffice, uint32_t);
     stamp payload_stamp;
 };
 

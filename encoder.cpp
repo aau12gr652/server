@@ -72,12 +72,14 @@ void encoder::set_layers(uint32_t L)
 
 void encoder::set_layer_size(uint32_t L, uint32_t S)
 {
+	L--;
 	assert(L < layers);
     layer_size[L] = S;
 }
 
 void encoder::set_layer_gamma(uint32_t L, uint32_t G)
 {
+	L--;
 	assert(L < layers);
     layer_gamma[L] = G;
 }
@@ -91,6 +93,12 @@ serial_data encoder::get_packet()
     for (n = 0; n < layers; n++)
         if (layer_choice <= layer_gamma[n])
             break;
+    return get_packet(n + 1);
+}
+
+serial_data encoder::get_packet(uint32_t n)
+{
+	n--;
     encoders[n]->encode( &payload_buffers[n][0] );
     payload_stamp.Layer_ID = n+1; // +1 for at gøre Benjamin glad
     payload_stamp.Layer_Size = layer_size[n];
@@ -98,11 +106,21 @@ serial_data encoder::get_packet()
     return return_value;
 }
 
-serial_data encoder::get_packet(uint32_t n)
+int encoder::send_packet(postoffice po)
 {
-    encoders[n]->encode( &payload_buffers[n][0] );
-    payload_stamp.Layer_ID = n+1; // +1 for at gøre Benjamin glad
-    payload_stamp.Layer_Size = layer_size[n];
-    serial_data return_value = {encoders[n]->payload_size(), (void*)&payload_buffers[n][0]};
-    return return_value;
+	int return_value = po.send(get_packet(), &payload_stamp);
+	if (return_value)
+		std::cout << std::endl << "ERROR: " << return_value*1 << std::endl;
+	assert(!return_value);
+	return return_value;
+
+}
+
+int encoder::send_packet(postoffice po, uint32_t L)
+{
+	int return_value = po.send(get_packet(L), &payload_stamp);
+	if (return_value)
+		std::cout << std::endl << "ERROR: " << return_value*1 << std::endl;
+	assert(!return_value);
+	return return_value;
 }
