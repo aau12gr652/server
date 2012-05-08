@@ -10,8 +10,8 @@ class encoder
     uint32_t symbol_size;
     uint32_t symbol_size_max;
     uint32_t layers;
-    uint32_t layer_size[10];
-    uint32_t layer_gamma[10];
+    std::vector<uint32_t> layer_size;
+    std::vector<uint32_t> layer_gamma;
     uint16_t Generation_Size;
     rlnc_encoder::pointer encoders[10];
     std::vector<uint8_t> data_in_buffers[10];

@@ -7,8 +7,10 @@ encoder::encoder(void)
     symbols_max = 1500;
     symbol_size_max = 1400;
     layers = 2;
+    layer_size.resize(layers);
     layer_size[0] = 500;
     layer_size[1] = 1000;
+    layer_gamma.resize(layers);
     layer_gamma[0] = 50;
     layer_gamma[1] = 100;
 
@@ -43,6 +45,7 @@ void encoder::set_symbol_size(uint32_t S)
 {
 	assert(S <= symbol_size_max);
 	symbol_size = S;
+	payload_stamp.Symbol_Size = S;
 }
 
 void encoder::set_generation_size(uint32_t G)
@@ -54,6 +57,7 @@ void encoder::set_generation_size(uint32_t G)
 
 void encoder::set_layers(uint32_t L)
 {
+	layer_size.resize(L);
     layers = L;
     payload_stamp.Number_Of_Layers = layers;
 }

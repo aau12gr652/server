@@ -15,7 +15,7 @@ int main(){
     foo.set_generation_size(14);
     foo.set_layer_size(0, 5);
     foo.set_layer_size(1, 14);
-    foo.set_layer_gamma(0, 50);
+    foo.set_layer_gamma(0, 0);
     foo.set_layer_gamma(1, 100);
     foo.set_symbol_size(1);
 
@@ -23,7 +23,7 @@ int main(){
 	{
 		foo.new_generation(msg[u]);
 		std::cout << "Done preparing GENENERATION: " << foo.payload_stamp.Generation_ID*1 << std::endl;
-		for (int n = 0; n < 16; n++)
+		for (int n = 0; n < 20; n++)
 		{
 			serial_data packet = foo.get_packet();
 			po.send(packet, &foo.payload_stamp);
