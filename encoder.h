@@ -27,6 +27,7 @@ public:
     void set_layer_gamma(uint32_t layer, uint32_t size);
     void set_symbol_size(uint32_t S);
     serial_data get_packet();
+    serial_data get_packet(uint32_t);
     stamp payload_stamp;
 };
 

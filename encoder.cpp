@@ -84,11 +84,22 @@ void encoder::set_layer_gamma(uint32_t L, uint32_t G)
 
 serial_data encoder::get_packet()
 {
-    int layer_choice = 1+*devRandom()%100;
+	uint8_t* RandomTal = devRandom();
+    int layer_choice = 1+*RandomTal%100;
+    free(RandomTal);
     int n;
     for (n = 0; n < layers; n++)
         if (layer_choice <= layer_gamma[n])
             break;
+    encoders[n]->encode( &payload_buffers[n][0] );
+    payload_stamp.Layer_ID = n+1; // +1 for at gøre Benjamin glad
+    payload_stamp.Layer_Size = layer_size[n];
+    serial_data return_value = {encoders[n]->payload_size(), (void*)&payload_buffers[n][0]};
+    return return_value;
+}
+
+serial_data encoder::get_packet(uint32_t n)
+{
     encoders[n]->encode( &payload_buffers[n][0] );
     payload_stamp.Layer_ID = n+1; // +1 for at gøre Benjamin glad
     payload_stamp.Layer_Size = layer_size[n];
