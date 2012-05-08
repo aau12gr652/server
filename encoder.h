@@ -13,9 +13,9 @@ class encoder
     std::vector<uint32_t> layer_size;
     std::vector<uint32_t> layer_gamma;
     uint16_t Generation_Size;
-    rlnc_encoder::pointer encoders[10];
-    std::vector<uint8_t> data_in_buffers[10];
-    std::vector<uint8_t> payload_buffers[10];
+    std::vector<rlnc_encoder::pointer> encoders;
+    std::vector<std::vector<uint8_t> > data_in_buffers;
+    std::vector<std::vector<uint8_t> > payload_buffers;
     rlnc_encoder::factory* encoder_factory;
 
 public:

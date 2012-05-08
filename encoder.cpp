@@ -24,6 +24,9 @@ encoder::encoder(void)
     payload_stamp.Symbol_Size = symbol_size;
 
     encoder_factory = new rlnc_encoder::factory(symbols_max, symbol_size);
+    encoders.resize(layers);
+    data_in_buffers.resize(layers);
+    payload_buffers.resize(layers);
 }
 
 void encoder::new_generation(char* data)
@@ -57,7 +60,12 @@ void encoder::set_generation_size(uint32_t G)
 
 void encoder::set_layers(uint32_t L)
 {
+	assert(L);
 	layer_size.resize(L);
+    layer_gamma.resize(L);
+    encoders.resize(L);
+    data_in_buffers.resize(L);
+    payload_buffers.resize(L);
     layers = L;
     payload_stamp.Number_Of_Layers = layers;
 }
@@ -65,14 +73,12 @@ void encoder::set_layers(uint32_t L)
 void encoder::set_layer_size(uint32_t L, uint32_t S)
 {
 	assert(L < layers);
-	assert(L + 1 != layers || S == Generation_Size);
     layer_size[L] = S;
 }
 
 void encoder::set_layer_gamma(uint32_t L, uint32_t G)
 {
 	assert(L < layers);
-	assert(L + 1 != layers || G == 100);
     layer_gamma[L] = G;
 }
 
