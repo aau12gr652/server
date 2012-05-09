@@ -1,6 +1,10 @@
 #ifndef _kodo_encoder_h
 #define _kodo_encoder_h
-#include "../postoffice/Postoffice.h"
+
+#include <iostream>
+#include <kodo/rlnc/full_vector_codes.h>
+
+#include <postoffice/Postoffice.h>
 
 typedef kodo::full_rlnc_encoder<fifi::binary8> rlnc_encoder;
 
@@ -28,8 +32,8 @@ public:
     void set_symbol_size(uint32_t S);
     serial_data get_packet();
     serial_data get_packet(uint32_t);
-    int send_packet(postoffice);
-    int send_packet(postoffice, uint32_t);
+    int send_packet(postoffice&);
+    int send_packet(postoffice&, uint32_t);
     stamp payload_stamp;
 };
 

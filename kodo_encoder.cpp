@@ -1,5 +1,3 @@
-#include <iostream>
-#include <kodo/rlnc/full_vector_codes.h>
 #include "kodo_encoder.h"
 
 kodo_encoder::kodo_encoder(void)
@@ -107,7 +105,7 @@ serial_data kodo_encoder::get_packet(uint32_t n)
     return return_value;
 }
 
-int kodo_encoder::send_packet(postoffice po)
+int kodo_encoder::send_packet(postoffice &po)
 {
 	int return_value = po.send(get_packet(), &payload_stamp);
 	if (return_value)
@@ -117,7 +115,7 @@ int kodo_encoder::send_packet(postoffice po)
 
 }
 
-int kodo_encoder::send_packet(postoffice po, uint32_t L)
+int kodo_encoder::send_packet(postoffice &po, uint32_t L)
 {
 	int return_value = po.send(get_packet(L), &payload_stamp);
 	if (return_value)
