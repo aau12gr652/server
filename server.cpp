@@ -32,8 +32,8 @@ int main()
 		}
 		for (int n = 0; n < 5; n++)
 		{
-//			serial_data get_packet(1);
-//			po.send(packet, &payload_stamp);
+//			serial_data packet = foo.get_packet(1);
+//			po.send(packet, &foo.payload_stamp);
 			foo.send_packet(po, 1);
 			std::cout << "Send packet: " << n  << " from layer: " << foo.payload_stamp.Layer_ID*1 << " Generation: " << foo.payload_stamp.Generation_ID*1 << std::endl;
 		}
