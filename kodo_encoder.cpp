@@ -31,7 +31,7 @@ void kodo_encoder::new_generation(char* data)
 {
 	assert(data);
     payload_stamp.Generation_ID++;
-    for (int n = 0; n < layers; n++)
+    for (uint32_t n = 0; n < layers; n++)
     {
         encoders[n] = encoder_factory->build(layer_size[n], symbol_size);
         data_in_buffers[n].resize(layer_size[n]);
@@ -39,7 +39,7 @@ void kodo_encoder::new_generation(char* data)
 //        encoders[n]->systematic_off();
         payload_buffers[n].resize(encoders[n]->payload_size());
     }
-    for (int n = 0; n < layers; n++)
+    for (uint32_t n = 0; n < layers; n++)
         copy(data, data+layer_size[n], data_in_buffers[n].begin());
 }
 
@@ -86,9 +86,9 @@ void kodo_encoder::set_layer_gamma(uint32_t L, uint32_t G)
 serial_data kodo_encoder::get_packet()
 {
 	uint8_t* RandomTal = devRandom();
-    int layer_choice = 1+*RandomTal%100;
+    uint32_t layer_choice = 1+*RandomTal%100;
     free(RandomTal);
-    int n;
+    uint32_t n;
     for (n = 0; n < layers; n++)
         if (layer_choice <= layer_gamma[n])
             break;

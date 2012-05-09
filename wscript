@@ -68,7 +68,7 @@ def build(bld):
     bld.program(features = 'cxx',
                 source   = ['server.cpp','../postoffice/Postoffice.cpp', "kodo_encoder.cpp"],
                 target   = 'server',
-                include  = ['../postoffice/Postoffice.h',"kodo_encoder.h"],
+                includes  = "..",
                 cxxflags = cxxflags,
                 use      = ['kodo_includes', 'boost_includes',
                             'fifi_includes', 'sak_includes'])

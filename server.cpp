@@ -1,6 +1,6 @@
 #include <kodo/rlnc/full_vector_codes.h>
 
-#include "../postoffice/Postoffice.h"
+#include <postoffice/Postoffice.h>
 #include "kodo_encoder.h"
 
 int main()
@@ -24,7 +24,7 @@ int main()
 	{
 		foo.new_generation(msg[u]);
 		for (int n = 0; n < 20; n++)
-			serial_data packet = foo.get_packet(2);
+			foo.get_packet(2);
 		for (int n = 0; n < 9; n++)
 		{
 			foo.send_packet(po, 2);
