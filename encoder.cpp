@@ -38,6 +38,7 @@ void encoder::new_generation(char* data)
         encoders[n] = encoder_factory->build(layer_size[n], symbol_size);
         data_in_buffers[n].resize(layer_size[n]);
         kodo::set_symbols(kodo::storage(data_in_buffers[n]), encoders[n]);
+//        encoders[n]->systematic_off();
         payload_buffers[n].resize(encoders[n]->payload_size());
     }
     for (int n = 0; n < layers; n++)
@@ -72,14 +73,14 @@ void encoder::set_layers(uint32_t L)
 
 void encoder::set_layer_size(uint32_t L, uint32_t S)
 {
-	L--;
+	L--; // -1 for at gøre Benjamin glad
 	assert(L < layers);
     layer_size[L] = S;
 }
 
 void encoder::set_layer_gamma(uint32_t L, uint32_t G)
 {
-	L--;
+	L--; // -1 for at gøre Benjamin glad
 	assert(L < layers);
     layer_gamma[L] = G;
 }
@@ -93,14 +94,14 @@ serial_data encoder::get_packet()
     for (n = 0; n < layers; n++)
         if (layer_choice <= layer_gamma[n])
             break;
-    return get_packet(n + 1);
+    return get_packet(n + 1); // +1 for at gøre Benjamin glad
 }
 
 serial_data encoder::get_packet(uint32_t n)
 {
-	n--;
+	n--; // -1 for at gøre Benjamin glad
     encoders[n]->encode( &payload_buffers[n][0] );
-    payload_stamp.Layer_ID = n+1; // +1 for at gøre Benjamin glad
+    payload_stamp.Layer_ID = n + 1; // +1 for at gøre Benjamin glad
     payload_stamp.Layer_Size = layer_size[n];
     serial_data return_value = {encoders[n]->payload_size(), (void*)&payload_buffers[n][0]};
     return return_value;
