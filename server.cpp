@@ -1,11 +1,11 @@
 #include <kodo/rlnc/full_vector_codes.h>
 
 #include "../postoffice/Postoffice.h"
-#include "encoder.h"
+#include "kodo_encoder.h"
 
 int main()
 {
-    encoder foo=encoder();
+    kodo_encoder foo=kodo_encoder();
     postoffice po("4000", "255.255.255.255");
 
     char* msg[3];

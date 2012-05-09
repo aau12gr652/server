@@ -1,10 +1,10 @@
-#ifndef _encoder_h
-#define _encoder_h
+#ifndef _kodo_encoder_h
+#define _kodo_encoder_h
 #include "../postoffice/Postoffice.h"
 
 typedef kodo::full_rlnc_encoder<fifi::binary8> rlnc_encoder;
 
-class encoder
+class kodo_encoder
 {
     uint32_t symbols_max;
     uint32_t symbol_size;
@@ -19,7 +19,7 @@ class encoder
     rlnc_encoder::factory* encoder_factory;
 
 public:
-    encoder(void);
+    kodo_encoder(void);
     void new_generation(char*);
     void set_generation_size(uint32_t);
     void set_layers(uint32_t);

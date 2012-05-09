@@ -1,8 +1,8 @@
 #include <iostream>
 #include <kodo/rlnc/full_vector_codes.h>
-#include "encoder.h"
+#include "kodo_encoder.h"
 
-encoder::encoder(void)
+kodo_encoder::kodo_encoder(void)
 {
     symbols_max = 1500;
     symbol_size_max = 1400;
@@ -29,7 +29,7 @@ encoder::encoder(void)
     payload_buffers.resize(layers);
 }
 
-void encoder::new_generation(char* data)
+void kodo_encoder::new_generation(char* data)
 {
 	assert(data);
     payload_stamp.Generation_ID++;
@@ -45,21 +45,21 @@ void encoder::new_generation(char* data)
         copy(data, data+layer_size[n], data_in_buffers[n].begin());
 }
 
-void encoder::set_symbol_size(uint32_t S)
+void kodo_encoder::set_symbol_size(uint32_t S)
 {
 	assert(S <= symbol_size_max);
 	symbol_size = S;
 	payload_stamp.Symbol_Size = S;
 }
 
-void encoder::set_generation_size(uint32_t G)
+void kodo_encoder::set_generation_size(uint32_t G)
 {
 	assert(G <= symbols_max);
     Generation_Size = G;
     payload_stamp.Generation_Size = Generation_Size;
 }
 
-void encoder::set_layers(uint32_t L)
+void kodo_encoder::set_layers(uint32_t L)
 {
 	assert(L);
 	layer_size.resize(L);
@@ -71,21 +71,21 @@ void encoder::set_layers(uint32_t L)
     payload_stamp.Number_Of_Layers = layers;
 }
 
-void encoder::set_layer_size(uint32_t L, uint32_t S)
+void kodo_encoder::set_layer_size(uint32_t L, uint32_t S)
 {
 	L--; // -1 for at gøre Benjamin glad
 	assert(L < layers);
     layer_size[L] = S;
 }
 
-void encoder::set_layer_gamma(uint32_t L, uint32_t G)
+void kodo_encoder::set_layer_gamma(uint32_t L, uint32_t G)
 {
 	L--; // -1 for at gøre Benjamin glad
 	assert(L < layers);
     layer_gamma[L] = G;
 }
 
-serial_data encoder::get_packet()
+serial_data kodo_encoder::get_packet()
 {
 	uint8_t* RandomTal = devRandom();
     int layer_choice = 1+*RandomTal%100;
@@ -97,7 +97,7 @@ serial_data encoder::get_packet()
     return get_packet(n + 1); // +1 for at gøre Benjamin glad
 }
 
-serial_data encoder::get_packet(uint32_t n)
+serial_data kodo_encoder::get_packet(uint32_t n)
 {
 	n--; // -1 for at gøre Benjamin glad
     encoders[n]->encode( &payload_buffers[n][0] );
@@ -107,7 +107,7 @@ serial_data encoder::get_packet(uint32_t n)
     return return_value;
 }
 
-int encoder::send_packet(postoffice po)
+int kodo_encoder::send_packet(postoffice po)
 {
 	int return_value = po.send(get_packet(), &payload_stamp);
 	if (return_value)
@@ -117,7 +117,7 @@ int encoder::send_packet(postoffice po)
 
 }
 
-int encoder::send_packet(postoffice po, uint32_t L)
+int kodo_encoder::send_packet(postoffice po, uint32_t L)
 {
 	int return_value = po.send(get_packet(L), &payload_stamp);
 	if (return_value)
