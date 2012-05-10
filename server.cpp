@@ -55,9 +55,10 @@ int main(int argc, char *argv[])
 		{
 			char* data = new char[1400*1200];
 			foo.new_generation(data);
-			for (int n = 0; n < 1400; n++)
+			for (int n = 0; n < 1403; n++)
 			{
 				foo.send_packet(po);
+				print_stamp(&foo.payload_stamp);
 			}
 			free(data);
 		}
