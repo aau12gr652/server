@@ -3,11 +3,11 @@
 kodo_encoder::kodo_encoder(void)
 {
     symbols_max = 1500;
-    symbol_size_max = 1400;
+    symbol_size_max = 1500;
     layers = 2;
     layer_size.resize(layers);
-    layer_size[0] = 500;
-    layer_size[1] = 1000;
+    layer_size[0] = 450;
+    layer_size[1] = 1400;
     layer_gamma.resize(layers);
     layer_gamma[0] = 50;
     layer_gamma[1] = 100;
@@ -21,7 +21,7 @@ kodo_encoder::kodo_encoder(void)
     payload_stamp.Generation_Size = Generation_Size;
     payload_stamp.Symbol_Size = symbol_size;
 
-    encoder_factory = new rlnc_encoder::factory(symbols_max, symbol_size);
+    encoder_factory = new rlnc_encoder::factory(symbols_max, symbol_size_max);
     encoders.resize(layers);
     data_in_buffers.resize(layers);
     payload_buffers.resize(layers);
@@ -34,13 +34,12 @@ void kodo_encoder::new_generation(char* data)
     for (uint32_t n = 0; n < layers; n++)
     {
         encoders[n] = encoder_factory->build(layer_size[n], symbol_size);
-        data_in_buffers[n].resize(layer_size[n]);
+        data_in_buffers[n].resize(layer_size[n]*symbol_size);
+ 	    memcpy(&data_in_buffers[n][0],data,layer_size[n]*symbol_size);
         kodo::set_symbols(kodo::storage(data_in_buffers[n]), encoders[n]);
         encoders[n]->systematic_off();
         payload_buffers[n].resize(encoders[n]->payload_size());
     }
-    for (uint32_t n = 0; n < layers; n++)
-        copy(data, data+layer_size[n], data_in_buffers[n].begin());
 }
 
 void kodo_encoder::set_symbol_size(uint32_t S)
