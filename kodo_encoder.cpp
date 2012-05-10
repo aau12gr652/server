@@ -36,7 +36,7 @@ void kodo_encoder::new_generation(char* data)
         encoders[n] = encoder_factory->build(layer_size[n], symbol_size);
         data_in_buffers[n].resize(layer_size[n]);
         kodo::set_symbols(kodo::storage(data_in_buffers[n]), encoders[n]);
-//        encoders[n]->systematic_off();
+        encoders[n]->systematic_off();
         payload_buffers[n].resize(encoders[n]->payload_size());
     }
     for (uint32_t n = 0; n < layers; n++)
@@ -87,6 +87,7 @@ serial_data kodo_encoder::get_packet()
 {
 	uint8_t* RandomTal = devRandom();
     uint32_t layer_choice = 1+*RandomTal%100;
+//    uint32_t layer_choice = 1+(*RandomTal*99)/255;
     free(RandomTal);
     uint32_t n;
     for (n = 0; n < layers; n++)

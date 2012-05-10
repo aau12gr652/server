@@ -2,7 +2,7 @@
 
 #include <postoffice/Postoffice.h>
 #include "kodo_encoder.h"
-
+#include <fstream>
 int main()
 {
     kodo_encoder foo=kodo_encoder();
@@ -23,8 +23,8 @@ int main()
 	for (int u = 0; u < 3; u++)
 	{
 		foo.new_generation(msg[u]);
-		for (int n = 0; n < 20; n++)
-			foo.get_packet(2);
+//		for (int n = 0; n < 20; n++)
+//			foo.get_packet(2);
 		for (int n = 0; n < 9; n++)
 		{
 			foo.send_packet(po, 2);
