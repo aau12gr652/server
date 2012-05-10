@@ -50,10 +50,10 @@ int main(int argc, char *argv[])
 		foo.set_layer_size(2, 1400);
 		foo.set_layer_gamma(1, 50);
 		foo.set_layer_gamma(2, 100);
-		foo.set_symbol_size(55);
-		for (int u = 0; u < 1; u++)
+		foo.set_symbol_size(1282);
+		for (int u = 0; u < 3; u++)
 		{
-			char* data = new char[1400*1200];
+			char* data = new char[1400*1400];
 			foo.new_generation(data);
 			for (int n = 0; n < 1403; n++)
 			{

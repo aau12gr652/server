@@ -6,7 +6,7 @@
 
 #include <postoffice/Postoffice.h>
 
-typedef kodo::full_rlnc_encoder<fifi::binary8> rlnc_encoder;
+typedef kodo::full_rlnc_encoder<fifi::binary> rlnc_encoder;
 
 class kodo_encoder
 {
