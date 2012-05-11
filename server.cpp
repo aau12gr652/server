@@ -6,8 +6,9 @@
 int main(int argc, char *argv[])
 {
     kodo_encoder foo=kodo_encoder();
-    postoffice po("4000", "255.255.255.255");
-
+    //postoffice po("4000", "255.255.255.255");
+    postoffice po("4000", "169.254.134.249");
+	char* PI="3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609550582231725359408128481117450284102701938521105559644622948954930381964428810975665933446128475648233786783165271201909145648566923460348610454326648213393607260249141273724587006606315588174881520920962829254091715364367892590360011330530548820466521384146951941511609";
     if (argc == 1)
 	{
 		char* msg[3];
@@ -51,17 +52,24 @@ int main(int argc, char *argv[])
 		foo.set_layer_gamma(1, 50);
 		foo.set_layer_gamma(2, 100);
 		foo.set_symbol_size(1282);
-		for (int u = 0; u < 3; u++)
+
+		void* data = malloc(1400*1400);
+		memset(data,0,1400*1400);
+		memcpy(data,(void*)PI,400);
+		foo.new_generation((char*)data);
+		foo.send_packet(po,2);
+		for (int u = 0; u < 1; u++)
 		{
-			char* data = new char[1400*1400];
-			foo.new_generation(data);
-			for (int n = 0; n < 1403; n++)
+			foo.new_generation((char*)data);
+			for (int n = 0; n < 2000; n++)
 			{
-				foo.send_packet(po);
-				print_stamp(&foo.payload_stamp);
+				foo.send_packet(po,2);
+				//print_stamp(&foo.payload_stamp);
+				std::cout << "Packet: " << n+1 << std::endl;
 			}
-			free(data);
+			std::cout << std::endl;
 		}
+		free(data);
 	}
 
     po.closeConnection();
