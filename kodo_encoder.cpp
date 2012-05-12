@@ -2,7 +2,7 @@
 
 kodo_encoder::kodo_encoder(void)
 {
-    symbols_max = 1500;
+    symbols_max = 2200;
     symbol_size_max = 1500;
     layers = 2;
     layer_size.resize(layers);
