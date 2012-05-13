@@ -72,6 +72,7 @@ void kodo_encoder::set_layer_size(uint32_t L, uint32_t S)
 {
 	L--; // -1 for at gøre Benjamin glad
 	assert(L < layers);
+	assert(S <= Generation_Size);
     layer_size[L] = S;
 }
 
