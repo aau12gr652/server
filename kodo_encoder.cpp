@@ -37,9 +37,10 @@ void kodo_encoder::new_generation(char* data)
         data_in_buffers[n].resize(layer_size[n]*symbol_size);
  	    memcpy(&data_in_buffers[n][0],data,layer_size[n]*symbol_size);
         kodo::set_symbols(kodo::storage(data_in_buffers[n]), encoders[n]);
-        encoders[n]->systematic_off();
+//        encoders[n]->systematic_off(); // Out of order
         payload_buffers[n].resize(encoders[n]->payload_size());
     }
+    waste_systematic_data();
 }
 
 void kodo_encoder::set_symbol_size(uint32_t S)
@@ -123,4 +124,12 @@ int kodo_encoder::send_packet(postoffice &po, uint32_t L)
 		std::cout << std::endl << "ERROR: " << return_value*1 << std::endl;
 	assert(!return_value);
 	return return_value;
+}
+
+
+void kodo_encoder::waste_systematic_data()
+{
+    for (uint32_t L = 1; L < layers; L++)
+        for (uint32_t S = 0; S < layer_size[L]; S++)
+            get_packet(L+1); // +1 for at gøre Benjamin glad
 }

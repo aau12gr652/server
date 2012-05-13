@@ -21,6 +21,7 @@ class kodo_encoder
     std::vector<std::vector<uint8_t> > data_in_buffers;
     std::vector<std::vector<uint8_t> > payload_buffers;
     rlnc_encoder::factory* encoder_factory;
+    void waste_systematic_data(void);
 
 public:
     kodo_encoder(void);
