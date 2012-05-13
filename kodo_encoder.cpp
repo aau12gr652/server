@@ -25,6 +25,9 @@ kodo_encoder::kodo_encoder(void)
     encoders.resize(layers);
     data_in_buffers.resize(layers);
     payload_buffers.resize(layers);
+    
+    // Seed random:
+    srand(0);
 }
 
 void kodo_encoder::new_generation(char* data)
@@ -37,7 +40,7 @@ void kodo_encoder::new_generation(char* data)
         data_in_buffers[n].resize(layer_size[n]*symbol_size);
  	    memcpy(&data_in_buffers[n][0],data,layer_size[n]*symbol_size);
         kodo::set_symbols(kodo::storage(data_in_buffers[n]), encoders[n]);
-        encoders[n]->systematic_off();
+//        encoders[n]->systematic_off();
         payload_buffers[n].resize(encoders[n]->payload_size());
     }
 }
@@ -84,10 +87,11 @@ void kodo_encoder::set_layer_gamma(uint32_t L, uint32_t G)
 
 serial_data kodo_encoder::get_packet()
 {
-	uint8_t* RandomTal = devRandom();
+//	uint8_t* RandomTal = devRandom();
 //    uint32_t layer_choice = 1+*RandomTal%100;
-    uint32_t layer_choice = 1+(*RandomTal*99)/255;
-    free(RandomTal);
+//    uint32_t layer_choice = 1+(*RandomTal*99)/255;
+//    free(RandomTal);
+    uint32_t layer_choice = (rand() % 100) + 1;
     uint32_t n;
     for (n = 0; n < layers; n++)
         if (layer_choice <= layer_gamma[n])

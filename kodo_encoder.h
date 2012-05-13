@@ -1,6 +1,7 @@
 #ifndef _kodo_encoder_h
 #define _kodo_encoder_h
 
+#include <cstdlib>
 #include <iostream>
 #include <kodo/rlnc/full_vector_codes.h>
 
