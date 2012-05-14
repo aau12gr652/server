@@ -25,7 +25,7 @@ kodo_encoder::kodo_encoder(void)
     encoders.resize(layers);
     data_in_buffers.resize(layers);
     payload_buffers.resize(layers);
-    
+
     // Seed random:
     srand(0);
 }
@@ -133,7 +133,7 @@ int kodo_encoder::send_packet(postoffice &po, uint32_t L)
 
 void kodo_encoder::waste_systematic_data()
 {
-    for (uint32_t L = 1; L < layers; L++)
+    for (uint32_t L = 0; L < layers; L++)
         for (uint32_t S = 0; S < layer_size[L]; S++)
             get_packet(L+1); // +1 for at gøre Benjamin glad
 }

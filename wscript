@@ -63,17 +63,24 @@ def build(bld):
                      '-Wextra', '-Wall']
 
     if bld.env.TOOLCHAIN == 'darwin':
-        cxxflags += ['-O2', '-g', '-ftree-vectorize',
-                     '-Wextra', '-Wall']
+        cxxflags += ['-O2', '-g', '-ftree-vectorize']
 
     if bld.env.TOOLCHAIN == 'win32':
         cxxflags += ['/O2', '/Ob2', '/W3', '/EHsc']
 
     bld.program(features = 'cxx',
-                source   = ['server.cpp','../postoffice/Postoffice.cpp', "kodo_encoder.cpp"],
-                target   = 'server',
-                includes  = "..",
+                source   = ['uep_test.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp"],
+                target   = 'uep_test',
+                includes  = ["..",'bundle_dependencies/boost-1.1.0-boost_1_48_0/boost'],
                 cxxflags = cxxflags,
-                use      = ['kodo_includes', 'boost_includes',
+                stlib = ['boost_thread-mt','boost_system-mt'],
+                use      = ['kodo_includes',
                             'fifi_includes', 'sak_includes'])
 
+#     bld.program(features = 'cxx',
+#                 source   = ['server.cpp','../postoffice/Postoffice.cpp', "kodo_encoder.cpp"],
+#                 target   = 'server',
+#                 includes  = "..",
+#                 cxxflags = cxxflags,
+#                 use      = ['kodo_includes', 'boost_includes',
+#                             'fifi_includes', 'sak_includes'])
