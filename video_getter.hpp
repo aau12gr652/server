@@ -1,0 +1,28 @@
+#include <hollywood_source.hpp>
+#include <blockbuster/blockbuster.hpp>
+#include <serializer/serializer.hpp>
+#include <cstdlib>
+#include <cstring>
+
+
+class video_getter {
+public:
+	uint8_t* data_ptr;
+	bool buffer_ready;
+
+	std::vector<uint32_t> serialized_buffer_table;
+
+	hollywood_source *hwood_src;
+	blockbuster *buster;
+	serializer *slizer;
+
+	video_getter(const char* path_to_file);
+	~video_getter();
+	
+	void prepare_avpacket_for_encoder(AVPacket* pkt);
+	void serialize_avpacket(AVPacket* pkt);
+	uint32_t get_gop(uint8_t** ptr);
+
+//	ret get () // THIS IS MAIN FUNCTIONALITY. RETURNS SERIALIZED BUFFER OF AVPACKET WITH INDICATION OF WHERE IDATA ENDS.
+	
+};
