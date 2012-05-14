@@ -45,10 +45,11 @@ void video_getter::serialize_avpacket(AVPacket* pkt)
 
 uint32_t video_getter::get_gop(uint8_t **new_ptr)
 {
-	while (!buffer_ready)
+	while (!buffer_ready && !hwood_src->video_file.eof())
 	{
 		hwood_src->demux();
 	}
+	if (hwood_src->video_file.eof()) return 0;
 	*new_ptr = data_ptr;
 	buffer_ready = false;
 	return serialized_buffer_table[1];
