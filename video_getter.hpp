@@ -3,6 +3,7 @@
 #include <serializer/serializer.hpp>
 #include <cstdlib>
 #include <cstring>
+#include <boost/bind.hpp>
 
 
 class video_getter {
@@ -13,7 +14,6 @@ public:
 	std::vector<uint32_t> serialized_buffer_table;
 
 	hollywood_source *hwood_src;
-	blockbuster *buster;
 	serializer *slizer;
 
 	video_getter(const char* path_to_file);

@@ -7,8 +7,8 @@ video_getter::video_getter(const char* filename)
 	errorcode = hwood_src->set_file(filename);
 	if (errorcode) std::cout << "unable to set file in hollywood_source" << std::endl;
 	
-	buster = new blockbuster(false);
-	hwood_src->signal_video_packet.connect(  )
+//	buster = new blockbuster(false);
+	hwood_src->signal_video_packet.connect( boost::bind( &video_getter::prepare_avpacket_for_encoder,this,_1 ) );
 	data_ptr = 0;
 	buffer_ready = false;
 }
@@ -16,7 +16,6 @@ video_getter::video_getter(const char* filename)
 video_getter::~video_getter()
 {
 	if(hwood_src) delete hwood_src;
-	if(buster) delete buster;
 	if(slizer) delete slizer;
 	if(data_ptr) delete data_ptr;
 }
@@ -51,6 +50,7 @@ uint32_t video_getter::get_gop(uint8_t **new_ptr)
 		hwood_src->demux();
 	}
 	*new_ptr = data_ptr;
+	buffer_ready = false;
 	return serialized_buffer_table[1];
 }
 
