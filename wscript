@@ -69,18 +69,29 @@ def build(bld):
         cxxflags += ['/O2', '/Ob2', '/W3', '/EHsc']
 
     bld.program(features = 'cxx',
-                source   = ['uep_test.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp"],
-                target   = 'uep_test',
+                source   = ['test_video.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp", 'video_getter.cpp','../serializer/serializer.cpp'],
+                target   = 'test_video',
+                includes  = ["..",'../hollywood/src','bundle_dependencies/boost-1.1.0-boost_1_48_0/boost'],
+                cxxflags = cxxflags,
+                stlib = ['hollywood','boost_thread-mt','boost_system-mt','avutil','avformat','avcodec','swscale'],
+                stlibpath = '/Users/jonashansen/Documents/AAU/P6/git/hollywood/build/darwin',
+                use      = ['kodo_includes',
+                            'fifi_includes', 'sak_includes'])
+
+    bld.program(features = 'cxx',
+                source   = ['test.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp"],
+                target   = 'test',
                 includes  = ["..",'bundle_dependencies/boost-1.1.0-boost_1_48_0/boost'],
                 cxxflags = cxxflags,
                 stlib = ['boost_thread-mt','boost_system-mt'],
                 use      = ['kodo_includes',
                             'fifi_includes', 'sak_includes'])
 
-#     bld.program(features = 'cxx',
-#                 source   = ['server.cpp','../postoffice/Postoffice.cpp', "kodo_encoder.cpp"],
-#                 target   = 'server',
-#                 includes  = "..",
-#                 cxxflags = cxxflags,
-#                 use      = ['kodo_includes', 'boost_includes',
-#                             'fifi_includes', 'sak_includes'])
+    bld.program(features = 'cxx',
+                source   = ['server.cpp','../postoffice/Postoffice.cpp', "kodo_encoder.cpp"],
+                target   = 'server',
+                includes  = ["..",'bundle_dependencies/boost-1.1.0-boost_1_48_0/boost'],
+                cxxflags = cxxflags,
+                stlib = ['boost_thread-mt','boost_system-mt'],
+                use      = ['kodo_includes',
+                            'fifi_includes', 'sak_includes'])
