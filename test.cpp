@@ -8,7 +8,7 @@
 int main()
 {
 	int Monte_Carlo = 1000;
-	int gsize = 96;
+	int gsize = 64;
 	int Over_Head = 300;
 	int symbol_size = 1000;
 
@@ -32,15 +32,15 @@ int main()
 		int Packet_Number;
 		char* RandomData = (char*)devRandom((gsize + 1) * symbol_size); // Generate random data
 
-		int layers = 3;
+		int layers = 2;
 		foo.set_layers(layers);
 		foo.set_generation_size(gsize);
 		foo.set_layer_size(1, 32);
 		foo.set_layer_size(2, 64);
-		foo.set_layer_size(3, gsize);
-		foo.set_layer_gamma(1, 50);
-		foo.set_layer_gamma(2, 80);
-		foo.set_layer_gamma(3, 100);
+//		foo.set_layer_size(3, gsize);
+		foo.set_layer_gamma(1, 70);
+		foo.set_layer_gamma(2, 100);
+//		foo.set_layer_gamma(3, 100);
 		foo.new_generation(RandomData); // add random data too encoder
 
 		for (Packet_Number = 0; Packet_Number < Over_Head * gsize; Packet_Number++)
