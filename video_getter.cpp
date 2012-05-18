@@ -3,9 +3,11 @@
 video_getter::video_getter(const char* filename)
 {
 	hwood_src = new hollywood_source;
+	slizer = new serializer();
+	
 	int errorcode = 0;
 	errorcode = hwood_src->set_file(filename);
-	if (errorcode) std::cout << "unable to set file in hollywood_source" << std::endl;
+	if (errorcode) std::cout << "unable to set file in hollywood_source. Errorcode: " << errorcode << std::endl;
 
 //	buster = new blockbuster(false);
 	hwood_src->signal_video_packet.connect( boost::bind( &video_getter::prepare_avpacket_for_encoder,this,_1 ) );
@@ -28,6 +30,7 @@ void video_getter::prepare_avpacket_for_encoder(AVPacket* pkt)
 		{
 			std::vector<uint8_t>& serialized_buffer = slizer->serialize(); // Because of the new keyframe, serializer contains one GOP. Flag this as ready.
 			if(data_ptr) delete data_ptr;
+			std::cout << "serialized buffer size: " << serialized_buffer.size() << std::endl;
 			data_ptr = new uint8_t[serialized_buffer.size()];
 			memcpy(data_ptr, &serialized_buffer[0], serialized_buffer.size());
 			buffer_ready = true;

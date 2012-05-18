@@ -4,7 +4,7 @@
 #include <postoffice/Postoffice.h>
 #include <node/kodo_decoder.h>
 #include <server/kodo_encoder.h>
-#include <server/video_getter.hpp>
+#include "video_getter.hpp"
 
 int main()
 {
@@ -15,32 +15,35 @@ int main()
 
     kodo_encoder foo=kodo_encoder();
     kodo_decoder poo=kodo_decoder();
-    video_getter hoo=video_getter("/Users/jonashansen/Desktop/Demo/ed_an_G20_3500k.avi");
+    video_getter hoo=video_getter("/home/jeppe/Videos/ed_an_G20_3500k.avi");
 
+	
 	foo.set_symbol_size(symbol_size);
 
 	std::ofstream statFileUEP;
 	statFileUEP.open("uep.txt");
 	statFileUEP << "%Generation, Packets, Layer 1, Layer 2, Layer 3" << std::endl;
-
+	
 	std::ofstream statFileEEP;
 	statFileEEP.open("eep.txt");
 	statFileEEP << "%Generation, Packets, Layer 1" << std::endl;
-
-
 	uint8_t* p = 0;
 	uint32_t size = 0;
 	size = hoo.get_gop(&p);
 	std::cout << "size: " << size*1 << " p: " << p << std::endl;
-
-	return 0;
+	if(!p)
+	{
+		std::cout << "Error: p is 0" << std::endl;
+		return 0;
+	}
 	serial_data Packet;
     std::vector<uint8_t> data_out;
 	for (int n = 0; n < Monte_Carlo; n++)
 	{
+		std::cout << "is this looping1?" << std::endl;
 		int Packet_Number;
 		char* RandomData = (char*)devRandom((gsize + 1) * symbol_size); // Generate random data
-
+		
 		int layers = 3;
 		foo.set_layers(layers);
 		foo.set_generation_size(gsize);
@@ -54,6 +57,7 @@ int main()
 
 		for (Packet_Number = 0; Packet_Number < Over_Head * gsize; Packet_Number++)
 		{
+			std::cout << "is this looping2?" << std::endl;
 			Packet = foo.get_packet(); // Get a packet
 			data_out = poo.decode(&foo.payload_stamp, Packet); // Decode the packet
 
