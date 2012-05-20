@@ -4,7 +4,7 @@ video_getter::video_getter(const char* filename)
 {
 	hwood_src = new hollywood_source;
 	slizer = new serializer();
-	
+
 	int errorcode = 0;
 	errorcode = hwood_src->set_file(filename);
 	if (errorcode) std::cout << "unable to set file in hollywood_source. Errorcode: " << errorcode << std::endl;
@@ -35,6 +35,10 @@ void video_getter::prepare_avpacket_for_encoder(AVPacket* pkt)
 			memcpy(data_ptr, &serialized_buffer[0], serialized_buffer.size());
 			buffer_ready = true;
 			buffer_size = serialized_buffer.size();
+			slizer->reset(buffer_size);
+			serialized_buffer_table_out.resize(serialized_buffer_table.size());
+			serialized_buffer_table_out = serialized_buffer_table;
+			serialized_buffer_table.clear();
 		}
 	}
 	serialize_avpacket(pkt);
@@ -56,7 +60,7 @@ uint32_t video_getter::get_gop(uint8_t **new_ptr)
 	if (hwood_src->video_file.eof()) return 0;
 	*new_ptr = data_ptr;
 	buffer_ready = false;
-	return serialized_buffer_table[1];
+	return serialized_buffer_table_out[1];
 }
 
 

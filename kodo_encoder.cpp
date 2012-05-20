@@ -80,6 +80,18 @@ void kodo_encoder::set_layer_size(uint32_t L, uint32_t S)
     layer_size[L] = S;
 }
 
+uint32_t kodo_encoder::get_layers(void)
+{
+	return layers;
+}
+uint32_t kodo_encoder::get_layer_size(uint32_t L)
+{
+	L--; // -1 for at gøre Benjamin glad
+	if (L < layers)
+	    return layer_size[L];
+	return 0;
+}
+
 void kodo_encoder::set_layer_gamma(uint32_t L, uint32_t G)
 {
 	L--; // -1 for at gøre Benjamin glad
@@ -89,11 +101,11 @@ void kodo_encoder::set_layer_gamma(uint32_t L, uint32_t G)
 
 serial_data kodo_encoder::get_packet()
 {
-//	uint8_t* RandomTal = devRandom();
+	uint8_t* RandomTal = devRandom();
 //    uint32_t layer_choice = 1+*RandomTal%100;
-//    uint32_t layer_choice = 1+(*RandomTal*99)/255;
-//    free(RandomTal);
-    uint32_t layer_choice = (rand() % 100) + 1;
+    uint32_t layer_choice = 1+(*RandomTal*99)/255;
+    free(RandomTal);
+//    uint32_t layer_choice = (rand() % 100) + 1;
     uint32_t n;
     for (n = 0; n < layers; n++)
         if (layer_choice <= layer_gamma[n])

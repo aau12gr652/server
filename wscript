@@ -79,8 +79,17 @@ def build(bld):
                             'fifi_includes', 'sak_includes'])
 
     bld.program(features = 'cxx',
-                source   = ['test.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp"],
-                target   = 'test',
+                source   = ['eep.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp"],
+                target   = 'eep',
+                includes  = ["..",'bundle_dependencies/boost-1.1.0-boost_1_48_0/boost'],
+                cxxflags = cxxflags,
+                stlib = ['boost_thread-mt','boost_system-mt'],
+                use      = ['kodo_includes',
+                            'fifi_includes', 'sak_includes'])
+
+    bld.program(features = 'cxx',
+                source   = ['uep.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp"],
+                target   = 'uep',
                 includes  = ["..",'bundle_dependencies/boost-1.1.0-boost_1_48_0/boost'],
                 cxxflags = cxxflags,
                 stlib = ['boost_thread-mt','boost_system-mt'],
