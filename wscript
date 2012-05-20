@@ -79,6 +79,16 @@ def build(bld):
                             'fifi_includes', 'sak_includes'])
 
     bld.program(features = 'cxx',
+                source   = ['test_video_eep.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp", 'video_getter.cpp','../serializer/serializer.cpp'],
+                target   = 'test_video_eep',
+                includes  = ["..",'../hollywood/src','bundle_dependencies/boost-1.1.0-boost_1_48_0/boost'],
+                cxxflags = cxxflags,
+                stlib = ['hollywood','boost_thread-mt','boost_system-mt','avutil','avformat','avcodec','swscale'],
+                stlibpath = '/Users/jonashansen/Documents/AAU/P6/git/hollywood/build/darwin',
+                use      = ['kodo_includes',
+                            'fifi_includes', 'sak_includes'])
+
+    bld.program(features = 'cxx',
                 source   = ['eep.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp"],
                 target   = 'eep',
                 includes  = ["..",'bundle_dependencies/boost-1.1.0-boost_1_48_0/boost'],

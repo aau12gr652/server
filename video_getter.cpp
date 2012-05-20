@@ -30,8 +30,8 @@ void video_getter::prepare_avpacket_for_encoder(AVPacket* pkt)
 		{
 			std::vector<uint8_t>& serialized_buffer = slizer->serialize(); // Because of the new keyframe, serializer contains one GOP. Flag this as ready.
 			if(data_ptr) delete data_ptr;
-			std::cout << "serialized buffer size: " << serialized_buffer.size() << std::endl;
-			data_ptr = new uint8_t[serialized_buffer.size()];
+			data_ptr = new uint8_t[serialized_buffer.size()+1500];
+			memset(data_ptr, 0, serialized_buffer.size()+1500);
 			memcpy(data_ptr, &serialized_buffer[0], serialized_buffer.size());
 			buffer_ready = true;
 			buffer_size = serialized_buffer.size();
@@ -42,6 +42,8 @@ void video_getter::prepare_avpacket_for_encoder(AVPacket* pkt)
 		}
 	}
 	serialize_avpacket(pkt);
+//	if (pkt->data)
+//		av_free_packet(pkt);
 }
 
 void video_getter::serialize_avpacket(AVPacket* pkt)
