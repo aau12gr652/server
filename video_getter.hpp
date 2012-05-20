@@ -9,6 +9,7 @@ class video_getter {
 public:
 	uint8_t* data_ptr;
 	bool buffer_ready;
+	uint32_t buffer_size;
 
 	std::vector<uint32_t> serialized_buffer_table;
 

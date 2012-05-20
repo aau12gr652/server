@@ -34,6 +34,7 @@ void video_getter::prepare_avpacket_for_encoder(AVPacket* pkt)
 			data_ptr = new uint8_t[serialized_buffer.size()];
 			memcpy(data_ptr, &serialized_buffer[0], serialized_buffer.size());
 			buffer_ready = true;
+			buffer_size = serialized_buffer.size();
 		}
 	}
 	serialize_avpacket(pkt);
