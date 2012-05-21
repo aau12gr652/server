@@ -32,15 +32,14 @@ kodo_encoder::kodo_encoder(void)
 
 void kodo_encoder::new_generation(char* data)
 {
-	assert(data);
+    assert(data);
     payload_stamp.Generation_ID++;
     for (uint32_t n = 0; n < layers; n++)
     {
         encoders[n] = encoder_factory->build(layer_size[n], symbol_size);
         data_in_buffers[n].resize(layer_size[n]*symbol_size);
- 	    memcpy(&data_in_buffers[n][0],data,layer_size[n]*symbol_size);
+         memcpy(&data_in_buffers[n][0],data,layer_size[n]*symbol_size);
         kodo::set_symbols(kodo::storage(data_in_buffers[n]), encoders[n]);
-//        encoders[n]->systematic_off(); // Out of order
         payload_buffers[n].resize(encoders[n]->payload_size());
     }
     waste_systematic_data();
@@ -48,22 +47,22 @@ void kodo_encoder::new_generation(char* data)
 
 void kodo_encoder::set_symbol_size(uint32_t S)
 {
-	assert(S <= symbol_size_max);
-	symbol_size = S;
-	payload_stamp.Symbol_Size = S;
+    assert(S <= symbol_size_max);
+    symbol_size = S;
+    payload_stamp.Symbol_Size = S;
 }
 
 void kodo_encoder::set_generation_size(uint32_t G)
 {
-	assert(G <= symbols_max);
+    assert(G <= symbols_max);
     Generation_Size = G;
     payload_stamp.Generation_Size = Generation_Size;
 }
 
 void kodo_encoder::set_layers(uint32_t L)
 {
-	assert(L);
-	layer_size.resize(L);
+    assert(L);
+    layer_size.resize(L);
     layer_gamma.resize(L);
     encoders.resize(L);
     data_in_buffers.resize(L);
@@ -74,35 +73,34 @@ void kodo_encoder::set_layers(uint32_t L)
 
 void kodo_encoder::set_layer_size(uint32_t L, uint32_t S)
 {
-	L--; // -1 for at gøre Benjamin glad
-	assert(L < layers);
-	assert(S <= Generation_Size);
+    L--; // -1 for at gøre Benjamin glad
+    assert(L < layers);
+    assert(S <= Generation_Size);
     layer_size[L] = S;
 }
 
 uint32_t kodo_encoder::get_layers(void)
 {
-	return layers;
+    return layers;
 }
 uint32_t kodo_encoder::get_layer_size(uint32_t L)
 {
-	L--; // -1 for at gøre Benjamin glad
-	if (L < layers)
-	    return layer_size[L];
-	return 0;
+    L--; // -1 for at gøre Benjamin glad
+    if (L < layers)
+        return layer_size[L];
+    return 0;
 }
 
 void kodo_encoder::set_layer_gamma(uint32_t L, uint32_t G)
 {
-	L--; // -1 for at gøre Benjamin glad
-	assert(L < layers);
+    L--; // -1 for at gøre Benjamin glad
+    assert(L < layers);
     layer_gamma[L] = G;
 }
 
 serial_data kodo_encoder::get_packet()
 {
-	uint8_t* RandomTal = devRandom();
-//    uint32_t layer_choice = 1+*RandomTal%100;
+    uint8_t* RandomTal = devRandom();
     uint32_t layer_choice = 1+(*RandomTal*99)/255;
     free(RandomTal);
 //    uint32_t layer_choice = (rand() % 100) + 1;
@@ -115,7 +113,7 @@ serial_data kodo_encoder::get_packet()
 
 serial_data kodo_encoder::get_packet(uint32_t n)
 {
-	n--; // -1 for at gøre Benjamin glad
+    n--; // -1 for at gøre Benjamin glad
     encoders[n]->encode( &payload_buffers[n][0] );
     payload_stamp.Layer_ID = n + 1; // +1 for at gøre Benjamin glad
     payload_stamp.Layer_Size = layer_size[n];
@@ -125,21 +123,21 @@ serial_data kodo_encoder::get_packet(uint32_t n)
 
 int kodo_encoder::send_packet(postoffice &po)
 {
-	int return_value = po.send(get_packet(), &payload_stamp);
-	if (return_value)
-		std::cout << std::endl << "ERROR: " << return_value*1 << std::endl;
-	assert(!return_value);
-	return return_value;
+    int return_value = po.send(get_packet(), &payload_stamp);
+    if (return_value)
+        std::cout << std::endl << "ERROR: " << return_value*1 << std::endl;
+    assert(!return_value);
+    return return_value;
 
 }
 
 int kodo_encoder::send_packet(postoffice &po, uint32_t L)
 {
-	int return_value = po.send(get_packet(L), &payload_stamp);
-	if (return_value)
-		std::cout << std::endl << "ERROR: " << return_value*1 << std::endl;
-	assert(!return_value);
-	return return_value;
+    int return_value = po.send(get_packet(L), &payload_stamp);
+    if (return_value)
+        std::cout << std::endl << "ERROR: " << return_value*1 << std::endl;
+    assert(!return_value);
+    return return_value;
 }
 
 
