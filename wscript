@@ -69,14 +69,25 @@ def build(bld):
         cxxflags += ['/O2', '/Ob2', '/W3', '/EHsc']
 
     bld.program(features = 'cxx',
-                source   = ['test_video.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp", 'video_getter.cpp','../serializer/serializer.cpp'],
-                target   = 'test_video',
+                source   = ['test_video_3_layers.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp", 'video_getter.cpp','../serializer/serializer.cpp'],
+                target   = 'test_video_3_layers',
                 includes  = ["..",'../hollywood/src','bundle_dependencies/boost-1.1.0-boost_1_48_0/boost'],
                 cxxflags = cxxflags,
                 stlib = ['hollywood','boost_thread-mt','boost_system-mt','avutil','avformat','avcodec','swscale'],
                 stlibpath = '/Users/jonashansen/Documents/AAU/P6/git/hollywood/build/darwin',
                 use      = ['kodo_includes',
                             'fifi_includes', 'sak_includes'])
+
+    bld.program(features = 'cxx',
+                source   = ['test_video_2_layers.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp", 'video_getter.cpp','../serializer/serializer.cpp'],
+                target   = 'test_video_2_layers',
+                includes  = ["..",'../hollywood/src','bundle_dependencies/boost-1.1.0-boost_1_48_0/boost'],
+                cxxflags = cxxflags,
+                stlib = ['hollywood','boost_thread-mt','boost_system-mt','avutil','avformat','avcodec','swscale'],
+                stlibpath = '/Users/jonashansen/Documents/AAU/P6/git/hollywood/build/darwin',
+                use      = ['kodo_includes',
+                            'fifi_includes', 'sak_includes'])
+
 
     bld.program(features = 'cxx',
                 source   = ['test_video_eep.cpp','../postoffice/Postoffice.cpp','../node/kodo_decoder.cpp', "kodo_encoder.cpp", 'video_getter.cpp','../serializer/serializer.cpp'],
