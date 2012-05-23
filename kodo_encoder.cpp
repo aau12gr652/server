@@ -27,7 +27,7 @@ kodo_encoder::kodo_encoder(void)
     payload_buffers.resize(layers);
 
     // Seed random:
-    srand(0);
+    srand(time(0));
 }
 
 void kodo_encoder::new_generation(char* data)
