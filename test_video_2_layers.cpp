@@ -6,12 +6,13 @@ int max_packet_size = 1450;
 
 int main()
 {
+	int gamma_index = 0; // Det her tal skal rettes
+
 	char file_name[10];
 	char* test_name	= "uep";
 	char* file_type = "txt";
 	uint8_t gamma1[6]={30, 35, 40, 45, 50, 70};
 	uint8_t gamma_length = 3;
-	gamma_index = 0;
 
 	sprintf(file_name, "%s%d.%s",test_name,gamma1[gamma_index],file_type);
 	std::ofstream statFileUEP;
