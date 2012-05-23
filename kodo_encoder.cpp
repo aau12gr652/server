@@ -100,10 +100,13 @@ void kodo_encoder::set_layer_gamma(uint32_t L, uint32_t G)
 
 serial_data kodo_encoder::get_packet()
 {
+/*  // Utilizing /dev/random as source of random data
     uint8_t* RandomTal = devRandom();
     uint32_t layer_choice = 1+(*RandomTal*99)/255;
     free(RandomTal);
-//    uint32_t layer_choice = (rand() % 100) + 1;
+*/
+//    uint32_t layer_choice = (rand() % 100) + 1; // Not uniform....
+    uint32_t layer_choice = std::ceil(((rand()/(float)RAND_MAX)*100));
     uint32_t n;
     for (n = 0; n < layers; n++)
         if (layer_choice <= layer_gamma[n])

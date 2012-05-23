@@ -9,79 +9,78 @@ int main()
 	char file_name[10];
 	char* test_name	= "uep";
 	char* file_type = "txt";
-	uint8_t gamma1[3]={35, 40, 45};
+	uint8_t gamma1[6]={30, 35, 40, 45, 50, 70};
 	uint8_t gamma_length = 3;
-	for (int gamma_index = 0; gamma_index < gamma_length; gamma_index++)
+	gamma_index = 0;
+
+	sprintf(file_name, "%s%d.%s",test_name,gamma1[gamma_index],file_type);
+	std::ofstream statFileUEP;
+	statFileUEP.open(file_name);
+	statFileUEP << "%M, Generation, Generation size, Symbol size, Layers, Layer 1 size, Layer 2 size, Layer 3 size, Received packets from layer 1, Received packets from layer 2, Received packets from layer 3, Total frames, Layer 1 Frames, Layer 2 Frames, Layer 3 Frames" << std::endl;
+
+	int Monte_Carlo = 100;
+	for (int M = 0; M < Monte_Carlo; M++)
 	{
-		sprintf(file_name, "%s%d.%s",test_name,gamma1[gamma_index],file_type);
-		std::ofstream statFileUEP;
-		statFileUEP.open(file_name);
-		statFileUEP << "%M, Generation, Generation size, Symbol size, Layers, Layer 1 size, Layer 2 size, Layer 3 size, Received packets from layer 1, Received packets from layer 2, Received packets from layer 3, Total frames, Layer 1 Frames, Layer 2 Frames, Layer 3 Frames" << std::endl;
-
-		int Monte_Carlo = 100;
-		for (int M = 0; M < Monte_Carlo; M++)
 		{
+			std::cout << "M: " << M << std::endl;
+			int GOPS = 2000;
+			int Over_Head = 300;
+
+			kodo_encoder foo=kodo_encoder();
+			kodo_decoder poo=kodo_decoder();
+			#ifdef JONAS
+			video_getter hoo=video_getter("/Users/jonashansen/Desktop/Demo/videos/ed_an_G20_2500k.avi");
+			#else
+			video_getter hoo=video_getter("/home/jeppe/Videos/ed_an_G20_3500k.avi");
+			#endif
+			std::cout << "Hurra, vi crashede ikke!" << std::endl;
+
+			serial_data Packet;
+			for (int n = 0; n < GOPS; n++)
 			{
-				std::cout << "M: " << M << std::endl;
-				int GOPS = 2000;
-				int Over_Head = 300;
+				uint8_t* p = 0;
+				uint32_t i_size = 0;
 
-				kodo_encoder foo=kodo_encoder();
-				kodo_decoder poo=kodo_decoder();
-				#ifdef JONAS
-				video_getter hoo=video_getter("/Users/jonashansen/Desktop/Demo/videos/ed_an_G20_2500k.avi");
-				#else
-				video_getter hoo=video_getter("/home/jeppe/Videos/ed_an_G20_3500k.avi");
-				#endif
-				std::cout << "Hurra, vi crashede ikke!" << std::endl;
+				i_size = hoo.get_gop(&p);
+				if (i_size == 0)
+					break;
+				uint32_t total_size = hoo.buffer_size;
+				uint32_t total_buffers = hoo.serialized_buffer_table_out.size();
 
-				serial_data Packet;
-				for (int n = 0; n < GOPS; n++)
+				uint32_t gsize = calculate_generation_size_from_gop_size(total_size);
+				uint32_t symbol_size = calculate_symbol_size_from_generation_size(gsize);
+
+				the_new_make_layers(2, gsize, symbol_size, &foo, i_size);
+				if (foo.get_layers() > 1)
+					foo.set_layer_gamma(1, gamma1[gamma_index]);
+				foo.new_generation((char*)p);
+
+				int frames_1 = 0, frames_2 = 0, frames_3 = 0;
+				for (int u = 0; u < total_buffers; u++)
+					if (hoo.serialized_buffer_table_out[u] < foo.get_layer_size(1) * symbol_size)
+						frames_1++;
+					else if (hoo.serialized_buffer_table_out[u] < foo.get_layer_size(2) * symbol_size)
+						frames_2++;
+
+				int Packet_Number, Packet_Number_1 = 0, Packet_Number_2 = 0, Packet_Number_3 = 0;
+				for (Packet_Number = 0; Packet_Number < Over_Head * gsize; Packet_Number++)
 				{
-					uint8_t* p = 0;
-					uint32_t i_size = 0;
+					Packet = foo.get_packet(); // Get a packet
+					poo.decode(&foo.payload_stamp, Packet); // Decode the packet
 
-					i_size = hoo.get_gop(&p);
-					if (i_size == 0)
-						break;
-					uint32_t total_size = hoo.buffer_size;
-					uint32_t total_buffers = hoo.serialized_buffer_table_out.size();
-
-					uint32_t gsize = calculate_generation_size_from_gop_size(total_size);
-					uint32_t symbol_size = calculate_symbol_size_from_generation_size(gsize);
-
-					the_new_make_layers(2, gsize, symbol_size, &foo, i_size);
-					if (foo.get_layers() > 1)
-						foo.set_layer_gamma(1, gamma1[gamma_index]);
-					foo.new_generation((char*)p);
-
-					int frames_1 = 0, frames_2 = 0, frames_3 = 0;
-					for (int u = 0; u < total_buffers; u++)
-						if (hoo.serialized_buffer_table_out[u] < foo.get_layer_size(1) * symbol_size)
-							frames_1++;
-						else if (hoo.serialized_buffer_table_out[u] < foo.get_layer_size(2) * symbol_size)
-							frames_2++;
-
-					int Packet_Number, Packet_Number_1 = 0, Packet_Number_2 = 0, Packet_Number_3 = 0;
-					for (Packet_Number = 0; Packet_Number < Over_Head * gsize; Packet_Number++)
-					{
-						Packet = foo.get_packet(); // Get a packet
-						poo.decode(&foo.payload_stamp, Packet); // Decode the packet
-
-						if (Packet_Number_1 == 0 && poo.is_layer_finish(1) == 1)
-							Packet_Number_1 = Packet_Number+1;
-						if (Packet_Number_2 == 0 && poo.is_layer_finish(2) == 1 && foo.get_layers() > 1)
-							Packet_Number_2 = Packet_Number+1;
-						if (poo.has_finished_decoding())
-							break; // No need to continue, since the data is all decoded
-					}
-					statFileUEP << M << ", " << n << ", " << gsize << ", " << symbol_size << ", " << foo.get_layers() << ", " << foo.get_layer_size(1) << ", " << foo.get_layer_size(2) << ", " << foo.get_layer_size(3) << ", " << Packet_Number_1 << ", " << Packet_Number_2 << ", " << Packet_Number_3 << ", " << total_buffers << ", " << frames_1 << ", " << frames_2 << ", " << frames_3 << std::endl;
+					if (Packet_Number_1 == 0 && poo.is_layer_finish(1) == 1)
+						Packet_Number_1 = Packet_Number+1;
+					if (Packet_Number_2 == 0 && poo.is_layer_finish(2) == 1 && foo.get_layers() > 1)
+						Packet_Number_2 = Packet_Number+1;
+					if (poo.has_finished_decoding())
+						break; // No need to continue, since the data is all decoded
 				}
-				statFileUEP.flush();
+				statFileUEP << M << ", " << n << ", " << gsize << ", " << symbol_size << ", " << foo.get_layers() << ", " << foo.get_layer_size(1) << ", " << foo.get_layer_size(2) << ", " << foo.get_layer_size(3) << ", " << Packet_Number_1 << ", " << Packet_Number_2 << ", " << Packet_Number_3 << ", " << total_buffers << ", " << frames_1 << ", " << frames_2 << ", " << frames_3 << std::endl;
 			}
+			statFileUEP.flush();
 		}
-		statFileUEP.close();
 	}
+	statFileUEP.close();
     return 0;
 }
 
