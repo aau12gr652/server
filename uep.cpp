@@ -16,50 +16,55 @@ int main()
     kodo_decoder poo=kodo_decoder();
 
 	foo.set_symbol_size(symbol_size);
-
-	std::ofstream statFileUEP;
-	statFileUEP.open("uep.txt");
-	statFileUEP << "%Generation, Packets, Layer 1, Layer 2, Layer 3" << std::endl;
-
 	serial_data Packet;
+	char file_name[10];
+	char* test_name	= "uepRandom";
+	char* file_type = "txt";
 
-	int layers = 3;
+	int layers = 2;
 	foo.set_layers(layers);
 	foo.set_generation_size(gsize);
 	foo.set_layer_size(1, 32);
-	foo.set_layer_size(2, 64);
-	foo.set_layer_size(3, gsize);
-	foo.set_layer_gamma(1, 50);
-	foo.set_layer_gamma(2, 80);
-	foo.set_layer_gamma(3, 100);
+	foo.set_layer_size(2, gsize);
+	foo.set_layer_gamma(2, 100);
+	int Gamma1[3]={30, 40 ,50};
+
 	char* RandomData = (char*)devRandom((gsize + 1) * symbol_size); // Generate random data
 
-	for (int n = 0; n < Monte_Carlo; n++)
+	for (int u = 0; u < 3; u++)
 	{
-		int Packet_Number;
-
-		foo.new_generation(RandomData); // add random data too encoder
-
-		for (Packet_Number = 0; Packet_Number < Over_Head * gsize; Packet_Number++)
+		std::ofstream statFileUEP;
+		sprintf(file_name, "%s%d.%s",test_name,Gamma1[u],file_type);
+		statFileUEP.open(file_name);
+		statFileUEP << "%Generation, Packets, Layer 1, Layer 2" << std::endl;
+		foo.set_layer_gamma(1, Gamma1[u]);
+		for (int n = 0; n < Monte_Carlo; n++)
 		{
-			Packet = foo.get_packet(); // Get a packet
-			poo.decode(&foo.payload_stamp, Packet); // Decode the packet
+			int Packet_Number;
 
-			if (poo.is_layer_finish(1) == 1 || poo.is_layer_finish(2) == 1 || poo.is_layer_finish(3) == 1)
+			foo.new_generation(RandomData); // add random data too encoder
+
+			for (Packet_Number = 0; Packet_Number < Over_Head * gsize; Packet_Number++)
 			{
-				statFileUEP << n << ", " << Packet_Number+1;
-				for (int L = 1; L <= layers; L++)
-					 statFileUEP << ", " << poo.is_layer_finish(L);
-				statFileUEP << std::endl;
+				Packet = foo.get_packet(); // Get a packet
+				poo.decode(&foo.payload_stamp, Packet); // Decode the packet
+
+				if (poo.is_layer_finish(1) == 1 || poo.is_layer_finish(2) == 1 || poo.is_layer_finish(3) == 1)
+				{
+					statFileUEP << n << ", " << Packet_Number+1;
+					for (int L = 1; L <= layers; L++)
+						 statFileUEP << ", " << poo.is_layer_finish(L);
+					statFileUEP << std::endl;
+				}
+				if (poo.has_finished_decoding())
+					break; // No need to continue, since the data is all decoded
 			}
-			if (poo.has_finished_decoding())
-				break; // No need to continue, since the data is all decoded
+			//std::cout << "Required packets (UEP): " << Packet_Number + 1 << std::endl;
+			if (n%500 == 0)
+					std::cout << "Generation " << n << " did complete, with gamma1 = " << Gamma1[u]*1 << std::endl;
 		}
-		//std::cout << "Required packets (UEP): " << Packet_Number + 1 << std::endl;
-		if (n%500 == 0)
-				std::cout << "Generation " << n << " did complete!" << std::endl;
+		statFileUEP.close();
 	}
 	free(RandomData); // Free the random data
-	statFileUEP.close();
     return 0;
 }

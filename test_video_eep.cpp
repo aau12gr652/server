@@ -20,7 +20,7 @@ int main()
 			kodo_encoder foo=kodo_encoder();
 			kodo_decoder poo=kodo_decoder();
 			#ifdef JONAS
-			video_getter hoo=video_getter("/Users/jonashansen/Desktop/Demo/ed_an_G20_2500k.avi");
+			video_getter hoo=video_getter("/Users/jonashansen/Desktop/Demo/videos/ed_an_G20_2500k.avi");
 			#else
 			video_getter hoo=video_getter("/home/jeppe/Videos/ed_an_G20_3500k.avi");
 			#endif
