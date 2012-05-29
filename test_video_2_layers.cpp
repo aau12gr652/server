@@ -21,16 +21,19 @@ int main(int argc, char *argv[])
 	statFileUEP.open(file_name);
 	statFileUEP << "%M, Generation, Generation size, Symbol size, Layers, Layer 1 size, Layer 2 size, Layer 3 size, Received packets from layer 1, Received packets from layer 2, Received packets from layer 3, Total frames, Layer 1 Frames, Layer 2 Frames, Layer 3 Frames" << std::endl;
 
-	int Monte_Carlo = 100;
+	kodo_encoder foo=kodo_encoder();
+	kodo_decoder poo=kodo_decoder();
+
+	int Monte_Carlo = 40;
 	for (int M = 0; M < Monte_Carlo; M++)
 	{
 		{
 			std::cout << "M: " << M << std::endl;
-			int GOPS = 2000;
+			int GOPS = 10; // 2000
 			int Over_Head = 300;
 
-			kodo_encoder foo=kodo_encoder();
-			kodo_decoder poo=kodo_decoder();
+//			kodo_encoder foo=kodo_encoder();
+//			kodo_decoder poo=kodo_decoder();
 			#ifdef JONAS
 			video_getter hoo=video_getter("/Users/jonashansen/Desktop/Demo/videos/ed_an_G20_2500k.avi");
 			#else
